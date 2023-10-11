@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+
+    <!-- internal css styling -->
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: aquamarine;
+            background: url(image/snake\ back.jpg);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+        }
+
+        #canvas{
+            border-radius: 10px;
+            border: 2px solid rgb(225, 132, 10);
+        }
+
+        canvas{
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+
+</head>
+<body>
+    
+<!-- this is the canva , where we can draw things -->
+    <canvas id="canvas" width="256" height="256" > </canvas>
+
+    <script type="module">
+
+        const canvas = document.getElementById("canvas");
+        // this is the setup for drawing something on the canva, alpha false means black, alpha true means white
+        const abc = canvas.getContext("2d", {alpha:false});
+        // arrows for playing the game
+        const dirs = {ArrowRight: [1,0], ArrowLeft:[-1, 0], ArrowDown: [0, 1], ArrowUp: [0, -1]};
+        // position of the game on the canvas
+
+        // initalize the position of snake in the canva
+        let snake = [[8, 8]];
+        // tell position of the snake and set it static with single '[]'
+        let apple = [4, 4];
+        // set the snake to come from the right direction in the beginning of the game
+        let dir = [1, 0];
+
+        // this listen to the event that is performed like pressing a key
+        window.addEventListener("keydown", (e) => {
+            const newDir = dirs[e.key];
+
+            // to set a new direction
+            if(newDir){
+                if(dir[0] + newDir[0] !==0 || dir[1] + newDir[1] !==0){
+                    dir = newDir;
+                }
+            }
+        })
+
+        // setting the interval with a timer that runs in milliseconds..... this is an entire function
+
+        setInterval(() => {
+            snake.unshift([(snake[0][0] +dir[0] + 16) % 16, (snake[0][1] + dir[1] + 16) % 16]);
+
+            // setting the game to fail
+            if(snake.slice(1).some(seg => seg[0] === snake[0][0] && seg[1] === snake[0][1])){
+                alert("GAME OVER!!!");
+            }
+            
+
+            else{
+            if(snake[0][0] === apple[0] && snake[0][1] ===apple[1]){
+                do{
+                    apple = [Math.floor(Math.random() * 16),
+                    Math.floor(Math.random()* 16)];
+                }
+                    while (snake.some(seg => seg[0] ===apple[0] && seg[1] ===  apple[1]));
+                    
+                }
+                else{
+                    snake.pop();
+                }
+                abc.clearRect(0, 0, 256, 256);
+                abc.fillStyle = "blue";
+                abc.fillRect(apple[0] * 16, apple[1] * 16, 16, 16);
+                abc.fillStyle = "green";
+                snake.forEach(([x, y]) => abc.fillRect(x * 16, y * 16, 16, 16));
+
+        }}, 150
+        );
+
+    </script>
+    
+</body>
+</html>
